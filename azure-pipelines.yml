@@ -6,9 +6,18 @@ pool:
 
 steps:
 - script: |
-    docker run -t yugabyteci/yb_build_infra_centos7:v2020-12-14T01_12_21 \
-    bash -c "
-       curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --quiet --no-modify-path -y
-       ~/.cargo/bin/cargo install sccache
-    "
+    df -H .
+    checkout_dir=$PWD
+    dir_in_container=/opt/yb-build/build-sccache
+    echo "Building in directory: $checkout_dir"
+    docker run \
+      -t \
+      -e GITHUB_TOKEN \
+      yugabyteci/yb_build_infra_centos7:v2020-12-14T01_12_21 \
+      --mount=type=bind,src=$checkout_dir,dst=$dir_in_container"
+      bash -c "
+        set -euo pipefail
+        cd '$dir_in_container'
+        ./build_and_release_sccache.sh
+      "
   displayName: 'Build and package sccache'
