@@ -18,6 +18,6 @@ steps:
       bash -c "
         set -euo pipefail
         cd '$dir_in_container'
-        ./build_and_release_sccache.sh
+        bash ./build_and_release.sh
       "
   displayName: 'Build and package sccache'
