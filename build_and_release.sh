@@ -2,9 +2,11 @@
 
 set -euo pipefail
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --quiet --no-modify-path -y
-~/.cargo/bin/cargo install sccache
+# ~/.cargo/bin/cargo install sccache
 sccache_path=$HOME/.cargo/bin/sccache
-( "$sccache_path" --help )
+set -e
+( set -x; "$sccache_path" --help )
+set +e
 sccache_version=$( "$sccache_path" | awk '{print $1}' )
 cp "$sccache_path" .
 gzip sccache
