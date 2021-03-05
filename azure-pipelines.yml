@@ -13,11 +13,13 @@ steps:
     checkout_dir=$PWD
     dir_in_container=/opt/yb-build/build-sccache
     echo "Building in directory: $checkout_dir"
+    docker_image=yugabyteci/yb_build_infra_centos7:v2020-12-14T01_12_21
+    echo "Using Docker image: $docker_image"
     docker run \
       -t \
       -e GITHUB_TOKEN \
-      --mount=type=bind,src=$checkout_dir,dst=$dir_in_container" \
-      yugabyteci/yb_build_infra_centos7:v2020-12-14T01_12_21 \
+      "--mount=type=bind,src=$checkout_dir,dst=$dir_in_container" \
+      "$docker_image" \
       bash -c "
         set -euo pipefail
         cd '$dir_in_container'
