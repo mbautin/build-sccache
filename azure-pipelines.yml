@@ -1,6 +1,9 @@
 trigger:
 - master
 
+variables:
+  GITHUB_TOKEN: $(githubToken)
+
 pool:
   vmImage: ubuntu-latest
 
