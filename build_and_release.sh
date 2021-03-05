@@ -3,25 +3,30 @@
 set -euo pipefail -x
 cd "${BASH_SOURCE[0]%/*}"
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --quiet --no-modify-path -y
-~/.cargo/bin/cargo install sccache
-sccache_path=$HOME/.cargo/bin/sccache
-set -e
-( set -x; "$sccache_path" --help )
-set +e
-sccache_version=$( "$sccache_path" --version | head -1 | awk '{print $2}' )
-echo "sccache version: $sccache_version"
+export PATH=$HOME/.cargo/bin:$PATH
 
 unix_timestamp_sec=$( date +%s )
-tag="v$sccache_version-$unix_timestamp_sec"
 
-archive_name=sccache-$tag.gz
+build_dir=$PWD/build
+sccache_tag=v0.2.15
 
-mkdir -p build
-rm -f build/*
-cd build
-cp "$sccache_path" .
-gzip sccache
-mv sccache.gz "$archive_name"
+rm -rf "$build_dir"
+mkdir -p "$build_dir"
+pushd "$build_dir"
+git clone https://github.com/mozilla/sccache.git --depth 1 --branch "$sccache_tag"
+pushd sccache
+cargo build --release --features="dist-client dist-server"
+popd
+popd
+
+cd "$build_dir"
+tag="$sccache_tag-$unix_timestamp_sec"
+
+dir_name=sccache-$tag
+mkdir -p "$dir_name"
+cp sccache/target/release/{sccache,sccache-dist} "./$dir_name"
+archive_name="sccache-$tag.tar.gz"
+tar cvzf "$archive_name" "$dir_name"
 
 sha256sum "$archive_name" >"$archive_name.sha256"
 
