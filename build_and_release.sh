@@ -2,7 +2,7 @@
 
 set -euo pipefail
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --quiet --no-modify-path -y
-# ~/.cargo/bin/cargo install sccache
+~/.cargo/bin/cargo install sccache
 sccache_path=$HOME/.cargo/bin/sccache
 set -e
 ( set -x; "$sccache_path" --help )
