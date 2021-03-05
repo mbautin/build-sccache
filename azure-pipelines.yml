@@ -1,9 +1,6 @@
 trigger:
 - master
 
-variables:
-  GITHUB_TOKEN: $(githubToken)
-
 pool:
   vmImage: ubuntu-latest
 
@@ -25,4 +22,7 @@ steps:
         cd '$dir_in_container'
         bash ./build_and_release.sh
       "
+  env:
+    GITHUB_TOKEN: '$(githubToken)'
+
   displayName: 'Build and package sccache'

@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-set -euo pipefail -x
+set -euo pipefail
+if [[ -z ${GITHUB_TOKEN:-} ]]; then
+  echo "GITHUB_TOKEN is not set" >&2
+  exit 1
+fi
+
+set -x
 cd "${BASH_SOURCE[0]%/*}"
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --quiet --no-modify-path -y
 export PATH=$HOME/.cargo/bin:$PATH
